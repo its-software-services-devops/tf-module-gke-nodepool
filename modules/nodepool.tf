@@ -5,10 +5,6 @@ locals {
     "https://www.googleapis.com/auth/monitoring",
     "https://www.googleapis.com/auth/compute",
   ]
-
-  cluster_node_metadata_config = var.node_metadata == "UNSPECIFIED" ? [] : [{
-    node_metadata = var.node_metadata
-  }]
 }
 
 resource "google_container_node_pool" "node_pool" {
@@ -25,7 +21,7 @@ resource "google_container_node_pool" "node_pool" {
   }
 
   node_config {
-    image_type   = "COS"
+    image_type   = var.image_type 
     disk_size_gb = var.disk_size_in_gb
     machine_type = var.machine_type
     labels       = var.node_labels
@@ -37,11 +33,8 @@ resource "google_container_node_pool" "node_pool" {
       enable_secure_boot = var.enable_secure_boot
     }
 
-    dynamic "workload_metadata_config" {
-      for_each = local.cluster_node_metadata_config
-      content {
-        node_metadata = workload_metadata_config.value.node_metadata
-      }
+    workload_metadata_config {
+      mode = var.node_metadata
     }
 
     oauth_scopes = concat(local.base_oauth_scope, var.additional_oauth_scopes)
@@ -54,6 +47,6 @@ resource "google_container_node_pool" "node_pool" {
 
   lifecycle {
     #create_before_destroy = true
-    ignore_changes = [ node_config ]
+    #ignore_changes = [ node_config ]
   }
 }
