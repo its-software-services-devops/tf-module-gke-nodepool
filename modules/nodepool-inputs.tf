@@ -59,6 +59,11 @@ variable "disk_type" {
   default     = "pd-standard"
 }
 
+variable "image_type" {
+  description = "Type of VM image type"
+  default     = "COS"
+}
+
 variable "additional_oauth_scopes" {
   type        = list
   description = "List of strings for additional oauth scope in a node config"
@@ -82,7 +87,7 @@ variable "preemptible_nodes" {
 
 variable "node_metadata" {
   description = "Specifies how node metadata is exposed to the workload running on the node. Set to `GKE_METADATA_SERVER` to enable workload identity"
-  default     = "UNSPECIFIED"
+  default     = "MODE_UNSPECIFIED"
   type        = string
 }
 
